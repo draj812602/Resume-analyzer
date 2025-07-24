@@ -42,3 +42,16 @@ if (document.readyState === "loading") {
 } else {
   injectUI();
 }
+
+// Listen for messages from the web app
+window.addEventListener("message", (event) => {
+  // Only accept messages from the web app origin
+  if (event.origin !== "http://localhost:5173") return;
+  if (event.data.type === "RESUME_ANALYZER_USER") {
+    chrome.storage.local.set({
+      userId: event.data.id,
+      userName: event.data.name,
+    });
+    console.log("User info saved to chrome.storage:", event.data);
+  }
+});

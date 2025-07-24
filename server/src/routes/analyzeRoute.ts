@@ -1,7 +1,7 @@
 import express from "express";
 import { callMixtral } from "../openrouterService";
 import { Request, Response } from "express";
-import { log } from "console";
+import { supabase } from "../supabaseClient";
 
 const router = express.Router();
 
@@ -26,4 +26,32 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/save-user", async (req, res) => {
+  const { id, email, name, avatar_url } = req.body;
+
+  if (!id || !email) return res.status(400).json({ error: "Missing fields" });
+
+  // Upsert user into Supabase
+  const { error } = await supabase
+    .from("users")
+    .upsert([{ id, email, name, avatar_url }], { onConflict: "id" });
+
+  if (error) {
+    console.error("Supabase upsert error:", error); // <-- Add this line
+    return res.status(500).json({ error: error.message });
+  }
+  return res.json({ success: true });
+});
+
+router.get("/get-user/:id", async (req, res) => {
+  const { id } = req.params;
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) return res.status(404).json({ error: "User not found" });
+  return res.json(data);
+});
 export default router;
