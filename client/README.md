@@ -1,54 +1,78 @@
-# React + TypeScript + Vite
+# Resume Analyzer Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React TypeScript application for analyzing resumes against job descriptions using AI.
 
-Currently, two official plugins are available:
+## Setup Instructions
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. Environment Variables
 
-## Expanding the ESLint configuration
+Create a `.env` file in the root of the client directory with your Supabase credentials:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**To get these values:**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Go to your [Supabase Dashboard](https://supabase.com/dashboard)
+2. Select your project
+3. Go to Settings > API
+4. Copy the Project URL and anon/public key
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+### 2. Google OAuth Setup
+
+In your Supabase dashboard:
+
+1. Go to Authentication > Providers
+2. Enable Google provider
+3. Add your Google OAuth credentials
+4. Set redirect URL to: `http://localhost:5173` (for development)
+
+### 3. Database Setup
+
+Your database should already have these tables:
+
+- `users` (for authentication)
+- `resumes` (for storing user resumes)
+- `job_descriptions` (for storing job descriptions)
+- `tailoring_sessions` (for analysis results)
+
+### 4. Start Development
+
+```bash
+npm install
+npm run dev
+```
+
+The application will open at `http://localhost:5173`
+
+## Features
+
+- ✅ Google OAuth Authentication
+- ✅ Resume Upload (PDF/DOCX support)
+- ✅ Job Description Analysis
+- ✅ AI-powered Resume Recommendations
+- ✅ Skills Match Percentage
+- ✅ Resume Export/Download
+- ✅ Responsive Bootstrap UI
+
+## Tech Stack
+
+- React 18 + TypeScript
+- Bootstrap 5 + React Bootstrap
+- Supabase (Auth + Database)
+- React Router v6
+- Vite (Build tool)
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+├── pages/              # Page components
+├── lib/                # Utility libraries
+├── hooks/              # Custom React hooks
+├── types/              # TypeScript type definitions
+└── assets/             # Static assets
 ```
