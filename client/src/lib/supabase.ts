@@ -24,16 +24,14 @@ export const saveUserToDatabase = async (
 
     console.log("Saving user to backend:", userData);
 
-    const response = await fetch(
-      "http://localhost:8000/api/analyze/save-user",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      }
-    );
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const response = await fetch(`${apiUrl}/api/analyze/save-user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -53,9 +51,8 @@ export const validateUserExists = async (userId: string): Promise<boolean> => {
   try {
     console.log("Validating user exists:", userId);
 
-    const response = await fetch(
-      `http://localhost:8000/api/analyze/get-user/${userId}`
-    );
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const response = await fetch(`${apiUrl}/api/analyze/get-user/${userId}`);
 
     if (response.status === 404) {
       console.log("User not found in database");

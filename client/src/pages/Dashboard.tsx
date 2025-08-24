@@ -104,7 +104,9 @@ const Dashboard: React.FC = () => {
       setLoadingAnalyses(true);
 
       const response = await fetch(
-        `http://localhost:8000/api/analyze/recent-analyses/${userId}`
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:8000"
+        }/api/analyze/recent-analyses/${userId}`
       );
 
       if (!response.ok) {
@@ -244,7 +246,9 @@ const Dashboard: React.FC = () => {
   const handleDeleteAnalysis = async (analysisId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/analyze/analysis/${analysisId}`,
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:8000"
+        }/api/analyze/analysis/${analysisId}`,
         {
           method: "DELETE",
         }
