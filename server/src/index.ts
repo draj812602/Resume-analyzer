@@ -25,6 +25,12 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// Health check endpoint for Railway
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", message: "Server is running" });
+});
+
 app.use("/api/analyze", analyzeRoute);
 
 app.listen(PORT, () => {

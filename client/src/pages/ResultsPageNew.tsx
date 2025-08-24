@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Card, Button, Modal } from "react-bootstrap";
+import React from "react";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface AnalysisResult {
@@ -15,7 +15,6 @@ interface AnalysisResult {
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [showResumeModal, setShowResumeModal] = useState(false);
 
   // Get analysis data from navigation state
   const { analysisResult } = location.state || {};

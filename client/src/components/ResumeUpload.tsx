@@ -136,7 +136,9 @@ const ResumeUpload: React.FC<ResumeUploadProps> = ({ onUploadSuccess }) => {
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      const textItems = content.items.map((item: { str: string }) => item.str);
+      const textItems = content.items
+        .map((item: any) => ("str" in item ? item.str : ""))
+        .filter((text) => text.length > 0);
       fullText += textItems.join(" ") + "\n";
     }
 
