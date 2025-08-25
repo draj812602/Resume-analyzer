@@ -145,8 +145,7 @@ export const checkUserAdmin = async (userId: string): Promise<boolean> => {
 // Submit feedback
 export const submitFeedback = async (
   userId: string,
-  message: string,
-  rating: number
+  message: string
 ): Promise<boolean> => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -158,7 +157,6 @@ export const submitFeedback = async (
       body: JSON.stringify({
         userId,
         message,
-        rating,
       }),
     });
 

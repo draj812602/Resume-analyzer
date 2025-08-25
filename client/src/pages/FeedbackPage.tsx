@@ -14,7 +14,6 @@ import type { User } from "@supabase/supabase-js";
 const FeedbackPage: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState("");
-  const [rating, setRating] = useState(5);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,12 +46,11 @@ const FeedbackPage: React.FC = () => {
     setError(null);
 
     try {
-      const success = await submitFeedback(user.id, message.trim(), rating);
+      const success = await submitFeedback(user.id, message.trim());
 
       if (success) {
         setSuccess(true);
         setMessage("");
-        setRating(5);
         setTimeout(() => setSuccess(false), 5000);
       } else {
         setError("Failed to submit feedback. Please try again.");
@@ -62,21 +60,6 @@ const FeedbackPage: React.FC = () => {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const renderStars = () => {
-    return [1, 2, 3, 4, 5].map((star) => (
-      <span
-        key={star}
-        className={`fs-4 me-1 ${
-          star <= rating ? "text-warning" : "text-muted"
-        }`}
-        style={{ cursor: "pointer" }}
-        onClick={() => setRating(star)}
-      >
-        {star <= rating ? "★" : "☆"}
-      </span>
-    ));
   };
 
   if (!user) {
@@ -122,33 +105,16 @@ const FeedbackPage: React.FC = () => {
                 <Card.Body className="p-4">
                   <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-4">
-                      <Form.Label className="fw-semibold">
-                        How would you rate your experience?
-                      </Form.Label>
-                      <div className="mt-2">
-                        {renderStars()}
-                        <small className="text-muted d-block mt-1">
-                          Click stars to rate (1 = Poor, 5 = Excellent)
-                        </small>
-                      </div>
-                    </Form.Group>
-
-                    <Form.Group className="mb-4">
-                      <Form.Label className="fw-semibold">
-                        Tell us about your experience
-                      </Form.Label>
                       <Form.Control
                         as="textarea"
-                        rows={6}
+                        rows={8}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Share your thoughts, suggestions, or report any issues you encountered..."
+                        placeholder="Share your feedback, suggestions, or report any issues..."
                         required
+                        className="border-2"
+                        style={{ fontSize: "16px" }}
                       />
-                      <Form.Text className="text-muted">
-                        Your feedback helps us improve the Resume Analyzer for
-                        everyone.
-                      </Form.Text>
                     </Form.Group>
 
                     <div className="d-grid">
@@ -182,7 +148,7 @@ const FeedbackPage: React.FC = () => {
               <div className="text-center mt-4">
                 <small className="text-muted">
                   <i className="bi bi-shield-check me-1"></i>
-                  Your feedback is confidential and helps us improve our service
+                  Your feedback helps us improve the service
                 </small>
               </div>
             </div>

@@ -313,15 +313,10 @@ router.get(
 
 // Submit feedback endpoint
 router.post("/feedback", async (req: Request, res: Response): Promise<void> => {
-  const { userId, message, rating } = req.body;
+  const { userId, message } = req.body;
 
-  if (!userId || !message || !rating) {
-    res.status(400).json({ error: "userId, message, and rating are required" });
-    return;
-  }
-
-  if (rating < 1 || rating > 5) {
-    res.status(400).json({ error: "Rating must be between 1 and 5" });
+  if (!userId || !message) {
+    res.status(400).json({ error: "userId and message are required" });
     return;
   }
 
@@ -333,7 +328,6 @@ router.post("/feedback", async (req: Request, res: Response): Promise<void> => {
         {
           user_id: userId,
           message: message.trim(),
-          rating: parseInt(rating),
         },
       ])
       .select()
@@ -376,7 +370,6 @@ router.get(
           `
         id,
         message,
-        rating,
         created_at,
         users!inner(id, email, name)
       `

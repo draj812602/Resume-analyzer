@@ -14,7 +14,6 @@ import type { User } from "@supabase/supabase-js";
 interface FeedbackItem {
   id: string;
   message: string;
-  rating: number;
   created_at: string;
   users: {
     id: string;
@@ -62,17 +61,6 @@ const AdminFeedbackPage: React.FC = () => {
     initializeAdmin();
   }, []);
 
-  const renderStars = (rating: number) => {
-    return [1, 2, 3, 4, 5].map((star) => (
-      <span
-        key={star}
-        className={`${star <= rating ? "text-warning" : "text-muted"}`}
-      >
-        {star <= rating ? "★" : "☆"}
-      </span>
-    ));
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -81,12 +69,6 @@ const AdminFeedbackPage: React.FC = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const getRatingColor = (rating: number) => {
-    if (rating >= 4) return "success";
-    if (rating >= 3) return "warning";
-    return "danger";
   };
 
   if (loading) {
@@ -163,11 +145,9 @@ const AdminFeedbackPage: React.FC = () => {
                               </small>
                             </div>
                             <div className="text-end">
-                              <div className="mb-1">
-                                {renderStars(item.rating)}
-                              </div>
-                              <Badge bg={getRatingColor(item.rating)}>
-                                {item.rating}/5
+                              <Badge bg="info" className="px-3 py-2">
+                                <i className="bi bi-chat-text me-1"></i>
+                                Feedback
                               </Badge>
                             </div>
                           </div>
