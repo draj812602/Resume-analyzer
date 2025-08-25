@@ -123,3 +123,73 @@ export interface TailoringSession {
   feedback_notes?: string;
   created_at: string;
 }
+
+// Check if user is admin
+export const checkUserAdmin = async (userId: string): Promise<boolean> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const response = await fetch(`${apiUrl}/api/analyze/check-admin/${userId}`);
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const result = await response.json();
+    return result.success && result.isAdmin;
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    return false;
+  }
+};
+
+// Submit feedback
+export const submitFeedback = async (
+  userId: string,
+  message: string,
+  rating: number
+): Promise<boolean> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const response = await fetch(`${apiUrl}/api/analyze/feedback`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        message,
+        rating,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to submit feedback");
+    }
+
+    const result = await response.json();
+    return result.success;
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    return false;
+  }
+};
+
+// Get all feedback (admin only)
+export const getAllFeedback = async (adminUserId: string): Promise<any[]> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const response = await fetch(
+      `${apiUrl}/api/analyze/feedback/${adminUserId}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch feedback");
+    }
+
+    const result = await response.json();
+    return result.success ? result.feedback : [];
+  } catch (error) {
+    console.error("Error fetching feedback:", error);
+    return [];
+  }
+};

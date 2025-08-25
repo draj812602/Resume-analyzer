@@ -7,7 +7,7 @@ import {
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "../lib/supabase";
+import { supabase, checkUserAdmin } from "../lib/supabase";
 
 interface NavbarProps {
   session: Session;
@@ -15,6 +15,18 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ session }) => {
   const [imageLoadError, setImageLoadError] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkAdmin = async () => {
+      if (session?.user?.id) {
+        const adminStatus = await checkUserAdmin(session.user.id);
+        setIsAdmin(adminStatus);
+      }
+    };
+
+    checkAdmin();
+  }, [session?.user?.id]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -44,6 +56,14 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
             </LinkContainer>
             <LinkContainer to="/analyze">
               <Nav.Link>Analyze</Nav.Link>
+            </LinkContainer>
+            {isAdmin && (
+              <LinkContainer to="/admin-feedback">
+                <Nav.Link>Feedback</Nav.Link>
+              </LinkContainer>
+            )}
+            <LinkContainer to="/feedback">
+              <Nav.Link>Give Feedback</Nav.Link>
             </LinkContainer>
             <Nav.Link href="#contact">Contact</Nav.Link>
           </Nav>

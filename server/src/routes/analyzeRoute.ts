@@ -280,4 +280,117 @@ router.delete(
   }
 );
 
+// Admin check endpoint
+router.get(
+  "/check-admin/:userId",
+  async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.params;
+
+    try {
+      const supabase = getSupabase();
+      const { data: user, error } = await supabase
+        .from("users")
+        .select("isAdmin")
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error("Error checking admin status:", error);
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      res.json({
+        success: true,
+        isAdmin: user.isAdmin === true,
+      });
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      res.status(500).json({ error: "Failed to check admin status" });
+    }
+  }
+);
+
+// Submit feedback endpoint
+router.post("/feedback", async (req: Request, res: Response): Promise<void> => {
+  const { userId, message, rating } = req.body;
+
+  if (!userId || !message || !rating) {
+    res.status(400).json({ error: "userId, message, and rating are required" });
+    return;
+  }
+
+  if (rating < 1 || rating > 5) {
+    res.status(400).json({ error: "Rating must be between 1 and 5" });
+    return;
+  }
+
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase
+      .from("feedback")
+      .insert([
+        {
+          user_id: userId,
+          message: message.trim(),
+          rating: parseInt(rating),
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({ success: true, feedback: data });
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    res.status(500).json({ error: "Failed to submit feedback" });
+  }
+});
+
+// Get all feedback (admin only)
+router.get(
+  "/feedback/:adminUserId",
+  async (req: Request, res: Response): Promise<void> => {
+    const { adminUserId } = req.params;
+
+    try {
+      const supabase = getSupabase();
+
+      // First check if user is admin
+      const { data: adminUser, error: adminError } = await supabase
+        .from("users")
+        .select("isAdmin")
+        .eq("id", adminUserId)
+        .single();
+
+      if (adminError || !adminUser?.isAdmin) {
+        res.status(403).json({ error: "Unauthorized. Admin access required." });
+        return;
+      }
+
+      // Get all feedback with user information
+      const { data: feedback, error } = await supabase
+        .from("feedback")
+        .select(
+          `
+        id,
+        message,
+        rating,
+        created_at,
+        users!inner(id, email, name)
+      `
+        )
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      res.json({ success: true, feedback: feedback || [] });
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+      res.status(500).json({ error: "Failed to fetch feedback" });
+    }
+  }
+);
+
 export default router;

@@ -19,6 +19,8 @@ import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import AnalyzePage from "./pages/AnalyzePage";
 import ResultsPage from "./pages/ResultsPage";
+import FeedbackPage from "./pages/FeedbackPage";
+import AdminFeedbackPage from "./pages/AdminFeedbackPage";
 import Navbar from "./components/Navbar";
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -117,6 +119,8 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/analyze" element={<AnalyzePage />} />
                 <Route path="/results" element={<ResultsPage />} />
+                <Route path="/feedback" element={<FeedbackPage />} />
+                <Route path="/admin-feedback" element={<AdminFeedbackPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </>
             )}
