@@ -386,4 +386,78 @@ router.get(
   }
 );
 
+// Get all users (admin only)
+router.get(
+  "/users/:adminUserId",
+  async (req: Request, res: Response): Promise<void> => {
+    const { adminUserId } = req.params;
+
+    try {
+      const supabase = getSupabase();
+
+      // First check if user is admin
+      const { data: adminUser, error: adminError } = await supabase
+        .from("users")
+        .select("isAdmin")
+        .eq("id", adminUserId)
+        .single();
+
+      if (adminError || !adminUser?.isAdmin) {
+        res.status(403).json({ error: "Unauthorized. Admin access required." });
+        return;
+      }
+
+      // Get all users with their stats
+      const { data: users, error } = await supabase
+        .from("users")
+        .select(
+          `
+          id,
+          email,
+          name,
+          avatar_url,
+          created_at,
+          "isAdmin"
+        `
+        )
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      // Get resume count for each user
+      const { data: resumeStats, error: resumeError } = await supabase
+        .from("resumes")
+        .select("user_id, id")
+        .order("user_id");
+
+      // Get analysis count for each user
+      const { data: analysisStats, error: analysisError } = await supabase
+        .from("tailoring_sessions")
+        .select("user_id, id")
+        .order("user_id");
+
+      // Combine stats
+      const userStats = (users || []).map((user) => {
+        const resumeCount =
+          resumeStats?.filter((r) => r.user_id === user.id).length || 0;
+        const analysisCount =
+          analysisStats?.filter((a) => a.user_id === user.id).length || 0;
+
+        return {
+          ...user,
+          stats: {
+            resumeCount,
+            analysisCount,
+          },
+        };
+      });
+
+      res.json({ success: true, users: userStats });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  }
+);
+
 export default router;

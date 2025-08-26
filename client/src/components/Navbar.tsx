@@ -58,9 +58,14 @@ const Navbar: React.FC<NavbarProps> = ({ session }) => {
               <Nav.Link>Analyze</Nav.Link>
             </LinkContainer>
             {isAdmin && (
-              <LinkContainer to="/admin-feedback">
-                <Nav.Link>Feedback</Nav.Link>
-              </LinkContainer>
+              <>
+                <LinkContainer to="/admin-users">
+                  <Nav.Link>Users</Nav.Link>
+                </LinkContainer>
+                <LinkContainer to="/admin-feedback">
+                  <Nav.Link>Feedback</Nav.Link>
+                </LinkContainer>
+              </>
             )}
             <LinkContainer to="/feedback">
               <Nav.Link>Give Feedback</Nav.Link>

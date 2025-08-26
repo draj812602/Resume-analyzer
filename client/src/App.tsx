@@ -21,6 +21,7 @@ import AnalyzePage from "./pages/AnalyzePage";
 import ResultsPage from "./pages/ResultsPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import AdminFeedbackPage from "./pages/AdminFeedbackPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
 import Navbar from "./components/Navbar";
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -120,6 +121,7 @@ function App() {
                 <Route path="/analyze" element={<AnalyzePage />} />
                 <Route path="/results" element={<ResultsPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
+                <Route path="/admin-users" element={<AdminUsersPage />} />
                 <Route path="/admin-feedback" element={<AdminFeedbackPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </>

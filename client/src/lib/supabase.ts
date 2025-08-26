@@ -191,3 +191,21 @@ export const getAllFeedback = async (adminUserId: string): Promise<any[]> => {
     return [];
   }
 };
+
+// Get all users (admin only)
+export const getAllUsers = async (adminUserId: string): Promise<any[]> => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+    const response = await fetch(`${apiUrl}/api/analyze/users/${adminUserId}`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
+    }
+
+    const result = await response.json();
+    return result.success ? result.users : [];
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
+};
